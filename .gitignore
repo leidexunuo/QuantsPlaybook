@@ -21,6 +21,14 @@ __pycache__/
 # 忽略 git worktree 目录
 .worktree/
 
+# Sequoia 原始快照、生成数据库和本地依赖缓存
+/Sequoia/*.parquet
+/Sequoia/*.sqlite3
+/Sequoia/*.sqlite3-shm
+/Sequoia/*.sqlite3-wal
+/Sequoia/config.json
+/.uv-cache/
+
 # 忽略 RRG 项目 docs 下的 superpowers 工作流文件（spec/plan 等）
 /C-择时类/相对旋转图RRG行业轮动/docs/superpowers/
 # RRG 项目 data/：放行目录本身与小映射/说明文件，忽略 duckdb 大文件

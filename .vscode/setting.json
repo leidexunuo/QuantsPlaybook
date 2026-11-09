@@ -1,0 +1,5 @@
+{
+    "http.proxy": "http://10.1.5.54:8118",
+    "http.proxySupport": "override",
+    "http.proxyStrictSSL": true
+}

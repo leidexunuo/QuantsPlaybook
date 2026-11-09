@@ -33,6 +33,45 @@
 - **深度学习**：集成多种神经网络算法（Transformer、LSTM等）
 - **因子挖掘**：独创的球队硬币因子、STR凸显性因子等
 
+## A 股多策略执行系统
+
+仓库根目录的 `main.py` 提供了一套基于本地 SQLite 的 A 股
+多策略选股和持仓管理流程：
+
+- 所有策略从权重 1 开始，平仓后按扣除双边手续费的实际收益在线更新入场策略权重。
+- 候选股票按命中策略的权重总和选择最高的 Top 30，Teams 消息内部按权重总分
+  从小到大排列。
+- 每只股票资金上限 10 万元，买入数量按 100 股整数倍向下取整；买入手续费
+  0.025%，卖出手续费 0.1%。
+- 支持止盈、止损、最大持仓期限、峰值回撤止损、策略分数下降确认、大盘风险控制
+  和卖出后冷却期。
+- 买入、持有、卖出原因、股数、手续费、收益率及持仓状态记录在
+  `Sequoia/selection_history.sqlite3`，并可推送至 Teams。
+- 每日同步同交易日的 A 股龙虎榜全榜，按相邻榜单生成买入、持有、卖出状态；
+  原始龙虎榜字段与状态同样写入 `Sequoia/selection_history.sqlite3`，并使用
+  与选股消息相同的 Teams Adaptive Card 样式分页推送。
+
+最小运行顺序：
+
+```powershell
+python -m pip install -r Sequoia/requirements.txt
+Copy-Item Sequoia/config.example.json Sequoia/config.json
+python Sequoia/fetch_three_year_data.py --check-only
+python Sequoia/fetch_three_year_data.py
+python main.py --reset-history --no-name-lookup
+python main.py --send
+```
+
+`fetch_three_year_data.py` 通过 Financial-API 下载全市场历史日 K 和复权事件，
+在本地仅保留最近三年并更新 SQLite。它不会用最新估值回填历史估值。
+
+在线权重、交易记录和调权流水保存在 `Sequoia/selection_history.sqlite3`。
+完整配置、数据库结构和运行说明见 [Sequoia 使用文档](Sequoia/README.md)。
+
+日常运行可使用 `python main.py --backfill --send`。其中 `--backfill` 会同时
+增量更新最近日 K、全市场复权事件、最新估值快照和轮换财务报表，而不再只更新
+日 K。离线调试时可加 `--no-dragon-tiger` 跳过龙虎榜联网查询。
+
 ### 📊 **丰富的策略生态**
 | 类别 | 策略数量 | 核心特色 | 代表作品 |
 |------|----------|----------|----------|
@@ -166,8 +205,11 @@ QuantsPlaybook/
 ├── B-因子构建类/           # 多因子模型构建 (22+个)
 ├── C-择时类/              # 市场择时策略 (25+个)
 ├── D-组合优化/            # 投资组合管理 (2个)
+├── Sequoia/              # A 股行情、评分与持仓 SQLite
 ├── hugos_toolkit/         # 通用工具库
-└── SignalMaker/          # 择时信号生成器
+├── SignalMaker/          # 择时信号生成器
+├── rollingScore.py       # 10 年滚动策略评分
+└── main.py               # 动态评分选股与持仓管理
 ```
 
 ### 🎯 策略统计

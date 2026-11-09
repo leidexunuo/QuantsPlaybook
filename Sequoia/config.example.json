@@ -1,0 +1,35 @@
+{
+  "financial_api": {
+    "base_url": "https://fuyao.aicubes.cn",
+    "x_api_key": "<your-x-api-key>",
+    "update_fundamentals": true,
+    "incremental_report_batch_size": 50
+  },
+  "teams": {
+    "webhook_url": "<your-teams-webhook-url>"
+  },
+  "trading": {
+    "budget_per_stock": 100000,
+    "lot_size": 100,
+    "buy_fee_rate": 0.00025,
+    "sell_fee_rate": 0.001
+  },
+  "exit_rules": {
+    "take_profit_rate": 0.2,
+    "stop_loss_rate": 0.1,
+    "max_holding_days": 60,
+    "trailing_drawdown_rate": 0.12,
+    "score_decline_confirmation_days": 3,
+    "market_ma_window": 20,
+    "market_return_window": 20,
+    "market_return_threshold": -0.05,
+    "reentry_cooldown_days": 5
+  },
+  "strategy_weights": {
+    "initial_weight": 1.0,
+    "learning_rate": 0.25,
+    "return_scale": 0.1,
+    "min_weight": 0.2,
+    "max_weight": 5.0
+  }
+}
